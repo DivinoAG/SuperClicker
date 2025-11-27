@@ -1,0 +1,245 @@
+warning: unused import: `SuperClicker`
+ --> src\ui.rs:3:27
+  |
+3 | use super::app::{Message, SuperClicker}; // Import Message and SuperClicker from app.rs
+  |                           ^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: variable does not need to be mutable
+  --> src\app.rs:43:13
+   |
+43 |         let mut hotkey_manager = HotkeyManager::new();
+   |             ----^^^^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` on by default
+
+warning: variable does not need to be mutable
+  --> src\clicking.rs:26:17
+   |
+26 |             let mut click_count = 0;
+   |                 ----^^^^^^^^^^^
+   |                 |
+   |                 help: remove this `mut`
+
+warning: field `hotkey_manager` is never read
+  --> src\app.rs:16:5
+   |
+ 9 | pub struct SuperClicker {
+   |            ------------ field in this struct
+...
+16 |     hotkey_manager: HotkeyManager,
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: variant `ToggleFromHotkey` is never constructed
+  --> src\app.rs:28:5
+   |
+22 | pub enum Message {
+   |          ------- variant in this enum
+...
+28 |     ToggleFromHotkey,
+   |     ^^^^^^^^^^^^^^^^
+   |
+   = note: `Message` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: method `stop_listening` is never used
+  --> src\hotkeys.rs:55:12
+   |
+10 | impl HotkeyManager {
+   | ------------------ method in this implementation
+...
+55 |     pub fn stop_listening(&self) {
+   |            ^^^^^^^^^^^^^^
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> src\app.rs:134:13
+    |
+134 |     fn view(&self) -> Element<Self::Message> {
+    |             ^^^^^     ---------------------- the same lifetime is hidden here
+    |             |
+    |             the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+134 |     fn view(&self) -> Element<'_, Self::Message> {
+    |                               +++
+
+warning: `super_clicker` (bin "super_clicker") generated 7 warnings (run `cargo fix --bin "super_clicker"` to apply 3 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running `target\debug\super_clicker.exe`
+Successfully registered hotkey: Ctrl+Alt+F6
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+STOP() called
+is_running is now false
+Click thread: interval_ms=2000
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=16ms, sleeping 1984ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=14ms, sleeping 1986ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=14ms, sleeping 1986ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+START: interval_input='2000' parsed as interval_ms=2000
+ClickingEngine.start() called with interval_ms=2000
+Click thread: interval_ms=2000
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=14ms, sleeping 1986ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=15ms, sleeping 1985ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=21ms, sleeping 1979ms (total interval=2000ms)
+Click #0: elapsed=11ms, sleeping 1989ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+Click #0: elapsed=13ms, sleeping 1987ms (total interval=2000ms)
+Click #0: elapsed=12ms, sleeping 1988ms (total interval=2000ms)
+STOP() called
+is_running is now false
+error: process didn't exit successfully: `target\debug\super_clicker.exe` (exit code: 0xffffffff)
