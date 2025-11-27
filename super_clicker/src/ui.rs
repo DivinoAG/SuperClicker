@@ -1,5 +1,5 @@
 use iced::Element;
-use iced::widget::{checkbox, column, pick_list, text, text_input, button};
+use iced::widget::{checkbox, column, pick_list, text, text_input, Button};
 use super::app::Message;
 use iced::Theme;
 use iced::Color;
@@ -12,15 +12,15 @@ pub fn view<'a>(
     is_running: bool,
 ) -> Element<'a, Message, Theme> {
     let start_btn: Element<Message> = if is_running {
-        button("Start").into()
+        Button::new(text("Start")).into()
     } else {
-        button("Start").on_press(Message::Start).into()
+        Button::new(text("Start")).on_press(Message::Start).into()
     };
 
     let stop_btn: Element<Message> = if !is_running {
-        button("Stop").into()
+        Button::new(text("Stop")).into()
     } else {
-        button("Stop").on_press(Message::Stop).into()
+        Button::new(text("Stop")).on_press(Message::Stop).into()
     };
 
     let status_color = if is_running {

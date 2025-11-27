@@ -3,6 +3,7 @@ mod ui;
 mod clicking;
 mod hotkeys;
 mod settings;
+mod theme; // Declare the theme module
 
 use iced::{Application, Settings};
 use app::SuperClicker;

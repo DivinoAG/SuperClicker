@@ -1,9 +1,10 @@
-use iced::{executor, Application, Command, Element, Theme, Subscription, Color};
+use iced::{executor, Application, Command, Element, Subscription};
 
 use super::ui;
 use super::clicking::ClickingEngine;
 use super::hotkeys::{self, HotkeyEvent};
 use super::settings::Settings;
+use super::theme::AppTheme;
 use std::thread;
 use std::time::{Duration, Instant};
 use dark_light;
@@ -21,7 +22,7 @@ pub struct SuperClicker {
     ctrl_pressed: bool,
     alt_pressed: bool,
     last_scroll_time: Instant,
-    current_theme: Theme,
+    current_theme: AppTheme, // Changed type to AppTheme
 }
 
 #[derive(Debug, Clone)]
@@ -37,13 +38,13 @@ pub enum Message {
     ModifiersChanged(bool, bool),
     NoOp,
     CheckTheme,
-    ThemeChanged(Theme),
+    ThemeChanged(AppTheme), // Changed to AppTheme
 }
 
 impl Application for SuperClicker {
     type Executor = executor::Default;
     type Message = Message;
-    type Theme = Theme;
+    type Theme = iced::Theme; // Keep iced::Theme as the associated type for Application
     type Flags = ();
 
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
@@ -51,9 +52,9 @@ impl Application for SuperClicker {
         
         let mode = dark_light::detect();
         let theme = match mode {
-            dark_light::Mode::Dark => Theme::Dark,
-            dark_light::Mode::Light => Theme::Light,
-            _ => Theme::Dark,
+            dark_light::Mode::Dark => AppTheme::Dark, // Initialize with AppTheme
+            dark_light::Mode::Light => AppTheme::Light, // Initialize with AppTheme
+            _ => AppTheme::Dark, // Default to Dark AppTheme
         };
 
         (
@@ -79,8 +80,8 @@ impl Application for SuperClicker {
         String::from("SuperClicker")
     }
 
-    fn theme(&self) -> Theme {
-        self.current_theme.clone()
+    fn theme(&self) -> iced::Theme { // Returns iced::Theme
+        self.current_theme.into() // Use into() to convert AppTheme to iced::Theme
     }
 
     fn update(
@@ -156,16 +157,16 @@ impl Application for SuperClicker {
             Message::CheckTheme => {
                 let mode = dark_light::detect();
                 let new_theme = match mode {
-                    dark_light::Mode::Dark => Theme::Dark,
-                    dark_light::Mode::Light => Theme::Light,
-                    _ => Theme::Dark,
+                    dark_light::Mode::Dark => AppTheme::Dark, // Pass AppTheme
+                    dark_light::Mode::Light => AppTheme::Light, // Pass AppTheme
+                    _ => AppTheme::Dark,
                 };
                 if new_theme != self.current_theme {
                     return Command::perform(async move { new_theme }, Message::ThemeChanged);
                 }
             }
             Message::ThemeChanged(theme) => {
-                self.current_theme = theme;
+                self.current_theme = theme; // Set AppTheme
             }
         }
 
