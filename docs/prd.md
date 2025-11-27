@@ -56,7 +56,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 - **Repository Structure:** Monorepo.
 - **Service Architecture:** Monolith (single executable application).
-- **Technology Stack Assumption:** C# with .NET and Windows Forms or WPF would be a suitable choice, as it provides excellent support for creating native Windows UI and handling global system hooks for hotkeys and mouse control.
+    - **Technology Stack Assumption:** Rust is the chosen technology stack, providing a performant and memory-safe environment for a native Windows application.
 - **Testing Requirements:** Unit and Integration testing. End-to-end manual testing will be required to ensure compatibility with different applications.
 
 ## 5. Epic List
@@ -69,15 +69,15 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 ### Epic 1: Foundational Setup & Core Click Logic
 
-*Goal: To create a basic, functional application that can be manually started and stopped from the UI, can perform clicks at a set interval, and allows the user to select the mouse button.* 
+*Goal: To create a basic, functional application that can be manually started and stopped from the UI, can perform clicks at a set interval, and allows the user to select the mouse button.*
 
 **Story 1.1: Project Scaffolding and Main Window**
 > As a developer,
-> I want to set up the initial C# project structure and create a basic main window,
+> I want to set up the initial Rust project structure and create a basic main window,
 > so that we have a foundation to build the application upon.
 
 - **Acceptance Criteria:**
-    1. A new C# Windows Forms or WPF project is created.
+    1. A new Rust `iced` project is created.
     2. A main application window is created and can be launched.
     3. The window has a title of "SuperClicker".
     4. The window contains placeholder text for status.
@@ -99,7 +99,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 ### Epic 2: Advanced Control and Hotkeys
 
-*Goal: To enable full background control of the application using system-wide hotkeys for a seamless user experience.* 
+*Goal: To enable full background control of the application using system-wide hotkeys for a seamless user experience.*
 
 **Story 2.1: Toggle Hotkey**
 > As a user,
@@ -126,7 +126,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 ### Epic 3: Hotkey Customization
 
-*Goal: To allow users to define their own hotkeys for the main application functions.* 
+*Goal: To allow users to define their own hotkeys for the main application functions.*
 
 **Story 3.1: UI for Hotkey Customization**
 > As a user,
