@@ -23,9 +23,10 @@ pub fn view<'a>(
     };
 
     column![
-        text(format!("Status: {}", status)),
+        text(format!("Status: {}", status)).size(20),
         text_input("Click Interval (ms):", interval_input)
-            .on_input(Message::IntervalInputChanged),
+            .on_input(Message::IntervalInputChanged)
+            .padding(5),
         pick_list(
             vec!["Left".to_string(), "Middle".to_string(), "Right".to_string()],
             Some(mouse_button_selected),
@@ -38,6 +39,7 @@ pub fn view<'a>(
         start_btn,
         stop_btn,
     ]
-    .spacing(10)
+    .spacing(15)
+    .padding(20)
     .into()
 }

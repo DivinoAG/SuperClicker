@@ -8,5 +8,8 @@ use iced::{Application, Settings};
 use app::SuperClicker;
 
 fn main() -> iced::Result {
-    SuperClicker::run(Settings::default())
+    let mut settings = Settings::default();
+    settings.window.size = iced::Size::new(400.0, 350.0);
+    settings.window.resizable = false;
+    SuperClicker::run(settings)
 }
