@@ -1,4 +1,4 @@
-use iced::{executor, Application, Command, Element, Theme, Subscription};
+use iced::{executor, Application, Command, Element, Theme, Subscription, Color};
 
 use super::ui;
 use super::clicking::ClickingEngine;
@@ -6,6 +6,7 @@ use super::hotkeys::{self, HotkeyEvent};
 use super::settings::Settings;
 use std::thread;
 use std::time::{Duration, Instant};
+use dark_light;
 
 pub struct SuperClicker {
     status: String,
@@ -20,6 +21,7 @@ pub struct SuperClicker {
     ctrl_pressed: bool,
     alt_pressed: bool,
     last_scroll_time: Instant,
+    current_theme: Theme,
 }
 
 #[derive(Debug, Clone)]
@@ -34,6 +36,8 @@ pub enum Message {
     LocalScroll(f32),    // From iced
     ModifiersChanged(bool, bool),
     NoOp,
+    CheckTheme,
+    ThemeChanged(Theme),
 }
 
 impl Application for SuperClicker {
@@ -44,6 +48,13 @@ impl Application for SuperClicker {
 
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
         let settings = Settings::load().unwrap_or_default();
+        
+        let mode = dark_light::detect();
+        let theme = match mode {
+            dark_light::Mode::Dark => Theme::Dark,
+            dark_light::Mode::Light => Theme::Light,
+            _ => Theme::Dark,
+        };
 
         (
             SuperClicker {
@@ -58,6 +69,7 @@ impl Application for SuperClicker {
                 ctrl_pressed: false,
                 alt_pressed: false,
                 last_scroll_time: Instant::now(),
+                current_theme: theme,
             },
             Command::none(),
         )
@@ -65,6 +77,10 @@ impl Application for SuperClicker {
 
     fn title(&self) -> String {
         String::from("SuperClicker")
+    }
+
+    fn theme(&self) -> Theme {
+        self.current_theme.clone()
     }
 
     fn update(
@@ -137,6 +153,20 @@ impl Application for SuperClicker {
                 }
             }
             Message::NoOp => {}
+            Message::CheckTheme => {
+                let mode = dark_light::detect();
+                let new_theme = match mode {
+                    dark_light::Mode::Dark => Theme::Dark,
+                    dark_light::Mode::Light => Theme::Light,
+                    _ => Theme::Dark,
+                };
+                if new_theme != self.current_theme {
+                    return Command::perform(async move { new_theme }, Message::ThemeChanged);
+                }
+            }
+            Message::ThemeChanged(theme) => {
+                self.current_theme = theme;
+            }
         }
 
         Command::none()
@@ -155,6 +185,7 @@ impl Application for SuperClicker {
                 HotkeyEvent::LocalScroll(d) => Message::LocalScroll(d),
                 _ => Message::NoOp,
             }),
+            iced::time::every(Duration::from_secs(1)).map(|_| Message::CheckTheme),
         ])
     }
 

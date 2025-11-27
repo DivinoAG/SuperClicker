@@ -2,6 +2,7 @@ use iced::Element;
 use iced::widget::{checkbox, column, pick_list, text, text_input, button};
 use super::app::Message;
 use iced::Theme;
+use iced::Color;
 
 pub fn view<'a>(
     status: &str,
@@ -22,8 +23,16 @@ pub fn view<'a>(
         button("Stop").on_press(Message::Stop).into()
     };
 
+    let status_color = if is_running {
+        Color::from_rgb(0.0, 0.8, 0.0)
+    } else {
+        Color::from_rgb(0.5, 0.5, 0.5)
+    };
+
     column![
-        text(format!("Status: {}", status)).size(20),
+        text(format!("Status: {}", status))
+            .size(20)
+            .style(status_color),
         text_input("Click Interval (ms):", interval_input)
             .on_input(Message::IntervalInputChanged)
             .padding(5),
