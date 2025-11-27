@@ -126,7 +126,7 @@ impl Application for SuperClicker {
         iced::time::every(Duration::from_millis(100)).map(|_| Message::Tick)
     }
 
-    fn view(&self) -> Element<Self::Message> {
+    fn view(&self) -> Element<'_, Self::Message> {
         ui::view(
             &self.status,
             &self.interval_input,

@@ -4,7 +4,6 @@ use std::sync::{Arc, Mutex};
 #[derive(Clone)]
 pub struct HotkeyManager {
     hotkey_manager: Arc<Mutex<Option<GlobalHotKeyManager>>>,
-    hotkey_registered: Arc<Mutex<bool>>,
 }
 
 impl HotkeyManager {
@@ -13,14 +12,12 @@ impl HotkeyManager {
             Ok(manager) => {
                 HotkeyManager {
                     hotkey_manager: Arc::new(Mutex::new(Some(manager))),
-                    hotkey_registered: Arc::new(Mutex::new(false)),
                 }
             }
             Err(e) => {
                 eprintln!("Failed to create GlobalHotKeyManager: {}", e);
                 HotkeyManager {
                     hotkey_manager: Arc::new(Mutex::new(None)),
-                    hotkey_registered: Arc::new(Mutex::new(false)),
                 }
             }
         }
@@ -38,8 +35,6 @@ impl HotkeyManager {
                 match manager.register(hk) {
                     Ok(_id) => {
                         println!("Successfully registered hotkey: Ctrl+Alt+F6");
-                        *self.hotkey_registered.lock().unwrap() = true;
-
                     }
                     Err(e) => {
                         eprintln!("Failed to register hotkey: {}", e);
@@ -47,10 +42,6 @@ impl HotkeyManager {
                 }
             }
         }
-    }
-
-    pub fn stop_listening(&self) {
-        *self.hotkey_registered.lock().unwrap() = false;
     }
 
     pub fn check_event(&self) -> bool {
