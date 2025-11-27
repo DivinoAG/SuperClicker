@@ -66,7 +66,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 - **Epic 2: Advanced Control and Hotkeys:** **IN PROGRESS** - Basic hotkey toggle implemented. Dynamic adjustment and customization are pending.
 - **Epic 3: Hotkey Customization:** **PENDING** - User-configurable hotkeys not yet implemented.
 - **Epic 4: UI/UX Refactor:** **PENDING** - Improve the application's visual design, layout, and user experience to be more polished, professional, and compact, respecting system themes.
-- **Epic 5: Technical Debt & Refinement:** **PENDING** - Address identified technical debt and optimize performance.
+- **Epic 5: Technical Debt & Refinement:** **COMPLETED** - Address identified technical debt and optimize performance.
 
 ## 6. Epic Details
 

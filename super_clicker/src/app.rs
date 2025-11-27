@@ -2,10 +2,10 @@ use iced::{executor, Application, Command, Element, Theme, Subscription};
 
 use super::ui;
 use super::clicking::ClickingEngine;
-use super::hotkeys::HotkeyManager;
+use super::hotkeys::{self, HotkeyEvent};
 use super::settings::Settings;
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 pub struct SuperClicker {
     status: String,
@@ -14,8 +14,8 @@ pub struct SuperClicker {
     enable_dynamic_adjustment: bool,
     is_running: bool,
     clicking_engine: ClickingEngine,
-    hotkey_manager: HotkeyManager,
     settings: Settings,
+    last_toggle: Instant,
 }
 
 #[derive(Debug, Clone)]
@@ -26,7 +26,7 @@ pub enum Message {
     Start,
     Stop,
     ToggleFromHotkey,
-    Tick,
+    NoOp,
 }
 
 impl Application for SuperClicker {
@@ -38,10 +38,6 @@ impl Application for SuperClicker {
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
         let settings = Settings::load().unwrap_or_default();
 
-        let hotkey_manager = HotkeyManager::new();
-        // Start listening for hotkeys
-        hotkey_manager.start_listening();
-
         (
             SuperClicker {
                 status: String::from("Stopped"),
@@ -50,80 +46,91 @@ impl Application for SuperClicker {
                 enable_dynamic_adjustment: settings.enable_dynamic_adjustment,
                 is_running: false,
                 clicking_engine: ClickingEngine::new(),
-                hotkey_manager,
                 settings,
+                last_toggle: Instant::now(),
             },
             Command::none(),
         )
-    }    fn title(&self) -> String {
+    }
+
+    fn title(&self) -> String {
         String::from("SuperClicker")
     }
 
-        fn update(
-            &mut self,
-            message: Self::Message,
-        ) -> Command<Self::Message> {
-            match message {
-                Message::IntervalInputChanged(value) => {
-                    self.interval_input = value.clone();
-                    if let Ok(ms) = value.parse::<u64>() {
-                        self.settings.interval_ms = ms;
-                        let _ = self.settings.save();
-                    }
-                }
-                Message::MouseButtonSelected(value) => {
-                    self.mouse_button_selected = value.clone();
-                    self.settings.mouse_button = value;
+    fn update(
+        &mut self,
+        message: Self::Message,
+    ) -> Command<Self::Message> {
+        match message {
+            Message::IntervalInputChanged(value) => {
+                self.interval_input = value.clone();
+                if let Ok(ms) = value.parse::<u64>() {
+                    self.settings.interval_ms = ms;
                     let _ = self.settings.save();
                 }
-                Message::DynamicAdjustmentToggled(value) => {
-                    self.enable_dynamic_adjustment = value;
-                    self.settings.enable_dynamic_adjustment = value;
-                    let _ = self.settings.save();
+            }
+            Message::MouseButtonSelected(value) => {
+                self.mouse_button_selected = value.clone();
+                self.settings.mouse_button = value;
+                let _ = self.settings.save();
+            }
+            Message::DynamicAdjustmentToggled(value) => {
+                self.enable_dynamic_adjustment = value;
+                self.settings.enable_dynamic_adjustment = value;
+                let _ = self.settings.save();
+            }
+            Message::Start => {
+                if self.is_running {
+                    self.clicking_engine.stop();
+                    thread::sleep(Duration::from_millis(50));
                 }
-                Message::Start => {
-                    if self.is_running {
-                        // Already running, stop first to clean up the old thread
-                        self.clicking_engine.stop();
-                        thread::sleep(Duration::from_millis(50)); // Give thread time to exit
-                    }
+                self.is_running = true;
+                self.status = String::from("Running");
+                let interval_ms: u64 = self.interval_input.parse().unwrap_or(100);
+                self.clicking_engine.start(&self.mouse_button_selected, interval_ms);
+            }
+            Message::Stop => {
+                println!("[Stop] received");
+                self.is_running = false;
+                self.status = String::from("Stopped");
+                self.clicking_engine.stop();
+            }
+            Message::ToggleFromHotkey => {
+                // Debounce logic: prevent double-toggling if both rdev and iced see the event
+                let now = Instant::now();
+                if now.duration_since(self.last_toggle) < Duration::from_millis(300) {
+                    return Command::none();
+                }
+                self.last_toggle = now;
+
+                if self.is_running {
+                    self.is_running = false;
+                    self.status = String::from("Stopped");
+                    self.clicking_engine.stop();
+                } else {
                     self.is_running = true;
                     self.status = String::from("Running");
                     let interval_ms: u64 = self.interval_input.parse().unwrap_or(100);
                     self.clicking_engine.start(&self.mouse_button_selected, interval_ms);
                 }
-                Message::Stop => {
-                    println!("[Stop] received - current is_running: {}", self.is_running);
-                    self.is_running = false;
-                    self.status = String::from("Stopped");
-                    self.clicking_engine.stop();
-                    println!("[Stop] Complete - is_running now: {}", self.is_running);
-                }
-                Message::ToggleFromHotkey => {
-                    // Toggle the running state
-                    if self.is_running {
-                        self.is_running = false;
-                        self.status = String::from("Stopped");
-                        self.clicking_engine.stop();
-                    } else {
-                        self.is_running = true;
-                        self.status = String::from("Running");
-                        let interval_ms: u64 = self.interval_input.parse().unwrap_or(100);
-                        self.clicking_engine.start(&self.mouse_button_selected, interval_ms);
-                    }
-                }
-                Message::Tick => {
-                    if self.hotkey_manager.check_event() {
-                        return self.update(Message::ToggleFromHotkey);
-                    }
-                }
             }
-
-            Command::none()
+            Message::NoOp => {}
         }
 
+        Command::none()
+    }
+
     fn subscription(&self) -> Subscription<Self::Message> {
-        iced::time::every(Duration::from_millis(100)).map(|_| Message::Tick)
+        Subscription::batch(vec![
+            hotkeys::subscribe().map(|event| match event {
+                HotkeyEvent::Toggle => Message::ToggleFromHotkey,
+                HotkeyEvent::Ignore => Message::NoOp,
+            }),
+            hotkeys::subscribe_local().map(|event| match event {
+                HotkeyEvent::Toggle => Message::ToggleFromHotkey,
+                HotkeyEvent::Ignore => Message::NoOp,
+            }),
+        ])
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
