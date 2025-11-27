@@ -9,9 +9,10 @@ This is a greenfield project, and no existing starter template will be used.
 
 ### Change Log
 
-| Date       | Version | Description   | Author  |
-| :--------- | :------ | :------------ | :------ |
-| 2025-10-29 | 1.0     | Initial Draft | Winston |
+| Date       | Version | Description                               | Author  |
+| :--------- | :------ | :---------------------------------------- | :------ |
+| 2025-11-27 | 1.1     | Hotkey fix and documentation alignment    | James   |
+| 2025-10-29 | 1.0     | Initial Draft                             | Winston |
 
 ## 2. High-Level Architecture
 
@@ -26,7 +27,7 @@ graph TD
     B["Application Logic"]
     C["Hotkey Manager"]
     D["Clicking Engine"]
-    E["OS-Level Hooks (rdev)"]
+    E["OS-Level Hotkeys (global-hotkey)"]
     F["Mouse Control (rdev)"]
 
     subgraph "SuperClicker Application"
@@ -51,22 +52,22 @@ graph TD
 
 ## 3. Tech Stack
 
-| Category      | Technology | Version | Purpose                               | Rationale                                                                                                |
-| :------------ | :--------- | :------ | :------------------------------------ | :------------------------------------------------------------------------------------------------------- |
-| Language      | Rust       | latest  | Primary development language          | Provides high performance, memory safety, and creates small, dependency-free executables.                 |
-| UI Framework  | `iced`     | latest  | A cross-platform GUI library for Rust | A simple, reactive, and easy-to-use library for building native UIs, well-suited for this project.      |
-| System Hooks  | `rdev`     | latest  | Global mouse/keyboard events          | A reliable library for listening to and simulating system-wide input, essential for hotkeys and clicking. |
-| Configuration | `serde`    | latest  | Serialization/Deserialization         | The standard for data handling in Rust. Used for saving and loading settings.                            |
-| Configuration | `config-rs`| latest  | Settings management                   | A helper library to easily manage reading configuration from files.                                      |
-| Testing       | `unittest` | built-in| Unit testing framework                | Rust's built-in unit testing capabilities are sufficient for this project.                               |
+| Category      | Technology    | Version | Purpose                               | Rationale                                                                                                |
+| :------------ | :------------ | :------ | :------------------------------------ | :------------------------------------------------------------------------------------------------------- |
+| Language      | Rust          | latest  | Primary development language          | Provides high performance, memory safety, and creates small, dependency-free executables.                 |
+| UI Framework  | `iced`        | 0.12    | A cross-platform GUI library for Rust | A simple, reactive, and easy-to-use library for building native UIs, well-suited for this project.      |
+| Global Hotkeys| `global-hotkey`| 0.5     | Global keyboard event handling        | A reliable library for listening to system-wide hotkeys.                                                 |
+| Input Sim.    | `rdev`        | 0.5.3   | Global mouse events and simulation    | Essential for simulating mouse clicks.                                                                   |
+| Configuration | `serde`       | 1.0     | Serialization/Deserialization         | The standard for data handling in Rust. Used for saving and loading settings.                            |
+| Testing       | `unittest`    | built-in| Unit testing framework                | Rust's built-in unit testing capabilities are sufficient for this project.                               |
 
 ## 4. Components
 
 - **`main.rs` / `app.rs`:** The main application entry point and the core `iced` application struct, holding the application's state and message-handling logic.
 - **`ui.rs`:** The module responsible for building the user interface using `iced` widgets.
 - **`clicking.rs`:** A module containing the `ClickingEngine`, responsible for performing the mouse clicks at the specified interval.
-- **`hotkeys.rs`:** A module containing the `HotkeyManager`, responsible for registering, unregistering, and handling global hotkeys using `rdev`.
-- **`settings.rs`:** A module responsible for defining the settings data structure and for saving/loading user settings using `serde` and `config-rs`.
+- **`hotkeys.rs`:** A module containing the `HotkeyManager`, responsible for registering, unregistering, and handling global hotkeys using `global-hotkey`.
+- **`settings.rs`:** A module responsible for defining the settings data structure and for saving/loading user settings using `serde`.
 
 ## 5. Source Tree
 
@@ -82,16 +83,17 @@ super_clicker/
     └── settings.rs     # Settings management
 ```
 
-## 6. Coding Standards
+## 6. Detailed Architecture Documentation
+- **Tech Stack:** See [Tech Stack](architecture/tech-stack.md)
+- **Coding Standards:** See [Coding Standards](architecture/coding-standards.md)
+- **Source Tree:** See [Source Tree](architecture/source-tree.md)
 
-- **Style:** Follow the standard Rust formatting conventions using `rustfmt`.
-- **Naming:** Use `snake_case` for functions and variables, and `PascalCase` for types.
-- **Critical Rules:**
-    - Avoid `unsafe` code unless absolutely necessary for OS interop.
-    - Use `clippy` for linting to catch common mistakes and improve code quality.
-    - All application state should be managed within the `iced` application model, avoiding global mutable state.
+
 
 ## 7. Next Steps
 
-- Review this architecture document with the project stakeholders.
-- Proceed to the development phase, starting with Epic 1.
+- **Current Status:** The core hotkey functionality has been implemented and verified. Documentation has been aligned to reflect the current tech stack and source tree.
+- **Next Actions:**
+    - Update the Product Requirements Document (PRD) to reflect the current implementation status and incorporate new stories for missing features (e.g., customizable hotkeys, dynamic interval adjustment).
+    - Create new stories to address technical debt (e.g., removing the unused `rdev` dependency).
+    - Review the updated architecture document with project stakeholders.

@@ -12,9 +12,10 @@
 Many users, particularly in gaming and data entry, perform highly repetitive clicking tasks. This manual process can be tedious and inefficient. SuperClicker aims to solve this by providing a reliable and easy-to-use auto-clicker. Unlike some existing solutions, it will provide a straightforward way to dynamically control the click speed and select the desired mouse button, running unobtrusively in the background.
 
 ### Change Log
-| Date       | Version | Description      | Author |
-| :--------- | :------ | :--------------- | :----- |
-| 2025-10-29 | 1.0     | Initial Draft    | John   |
+| Date       | Version | Description                               | Author |
+| :--------- | :------ | :---------------------------------------- | :----- |
+| 2025-11-27 | 1.1     | Hotkey toggle implemented; docs aligned   | James  |
+| 2025-10-29 | 1.0     | Initial Draft                             | John   |
 
 ## 2. Requirements
 
@@ -61,17 +62,19 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 ## 5. Epic List
 
-- **Epic 1: Foundational Setup & Core Click Logic:** Establish the project structure and implement the fundamental clicking mechanism and the main application window.
-- **Epic 2: Advanced Control and Hotkeys:** Integrate system-wide hotkeys for controlling the application and dynamically adjusting the click interval.
-- **Epic 3: Hotkey Customization:** Implement the UI and logic for user-configurable hotkeys.
+- **Epic 1: Foundational Setup & Core Click Logic:** **COMPLETED (Hotkeys Primary Control)** - Basic clicking mechanism and main window implemented. Hotkeys are now the primary start/stop control, replacing UI buttons.
+- **Epic 2: Advanced Control and Hotkeys:** **IN PROGRESS** - Basic hotkey toggle implemented. Dynamic adjustment and customization are pending.
+- **Epic 3: Hotkey Customization:** **PENDING** - User-configurable hotkeys not yet implemented.
+- **Epic 4: UI/UX Refactor:** **PENDING** - Improve the application's visual design, layout, and user experience to be more polished, professional, and compact, respecting system themes.
+- **Epic 5: Technical Debt & Refinement:** **PENDING** - Address identified technical debt and optimize performance.
 
 ## 6. Epic Details
 
 ### Epic 1: Foundational Setup & Core Click Logic
 
-*Goal: To create a basic, functional application that can be manually started and stopped from the UI, can perform clicks at a set interval, and allows the user to select the mouse button.*
+*Goal: To create a basic, functional application that can be controlled via hotkeys, can perform clicks at a set interval, and allows the user to select the mouse button.*
 
-**Story 1.1: Project Scaffolding and Main Window**
+**Story 1.1: Project Scaffolding and Main Window (COMPLETED)**
 > As a developer,
 > I want to set up the initial Rust project structure and create a basic main window,
 > so that we have a foundation to build the application upon.
@@ -85,31 +88,30 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
     6. The window contains a dropdown menu for mouse button selection with "Left", "Middle", and "Right" as options.
     7. The window contains a checkbox, labeled "Enable Dynamic Interval Adjustment", which is checked by default.
 
-**Story 1.2: Basic Clicking Logic**
+**Story 1.2: Basic Clicking Logic (COMPLETED)**
 > As a user,
-> I want the application to repeatedly click the mouse at a specified interval when I press a "Start" button,
+> I want the application to repeatedly click the mouse at a specified interval when I use the toggle hotkey,
 > so that I can automate repetitive clicks.
 
 - **Acceptance Criteria:**
-    1. The main window has "Start" and "Stop" buttons.
-    2. When "Start" is clicked, the application begins clicking the selected mouse button at the current cursor location.
-    3. The click interval is based on the value in the interval input field.
-    4. When "Stop" is clicked, the clicking ceases.
-    5. The status text in the window updates to "Running" or "Stopped" accordingly.
+    1. The application begins clicking the selected mouse button at the current cursor location when the toggle hotkey is pressed.
+    2. The click interval is based on the value in the interval input field.
+    3. When the toggle hotkey is pressed again, the clicking ceases.
+    4. The status text in the window updates to "Running" or "Stopped" accordingly.
 
 ### Epic 2: Advanced Control and Hotkeys
 
 *Goal: To enable full background control of the application using system-wide hotkeys for a seamless user experience.*
 
-**Story 2.1: Toggle Hotkey**
+**Story 2.1: Toggle Hotkey (PARTIALLY IMPLEMENTED)**
 > As a user,
 > I want to press a global hotkey to start and stop the auto-clicker,
 > so that I don't have to switch to the application window.
 
 - **Acceptance Criteria:**
-    1. The application uses the user-configured hotkey to toggle the auto-clicker on and off.
+    1. The application uses a default global hotkey (Ctrl+Alt+F6) to toggle the auto-clicker on and off.
     2. The hotkey works even when the SuperClicker application is not the active window.
-    3. The "Start" and "Stop" buttons in the UI are removed or disabled, as the hotkey is now the primary control.
+    3. The "Start" and "Stop" buttons in the UI are no longer present, as the hotkey is now the primary control.
 
 **Story 2.2: Dynamic Interval Adjustment Hotkey**
 > As a user,
@@ -151,7 +153,116 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
     3. The custom hotkeys are loaded and applied when the application starts.
     4. Default hotkeys (Ctrl+Alt+F6 and Ctrl+Alt+Shift) are used if no custom configuration is saved.
 
+### Epic 4: UI/UX Refactor
+
+*Goal: To transform the application's user interface into a polished, professional, and compact utility that adheres to modern UI/UX best practices and system aesthetics.*
+
+**Story 4.1: Initial Window Refactor & Layout**
+> As a user,
+> I want the application window to be compact and non-resizable,
+> so that it takes up minimal screen space and has a professional appearance.
+
+- **Acceptance Criteria:**
+    1. The main application window has a fixed size, determined by its content.
+    2. The window is not resizable by the user.
+    3. The window displays the application title "SuperClicker" in its title bar.
+    4. Elements within the window are laid out with consistent padding and margins, as per the Frontend Specification.
+
+**Story 4.2: Adaptive Theming & Enhanced Status Display**
+> As a user,
+> I want the application to respect my system's light/dark mode settings and show a clear status,
+> so that the app integrates seamlessly with my OS and I can easily tell if it's active.
+
+- **Acceptance Criteria:**
+    1. The application's UI theme (colors, backgrounds) automatically adapts to the system's light or dark mode setting.
+    2. The "Status" display (Running/Stopped) is visually prominent with distinct colors (e.g., green for Running, neutral for Stopped).
+    3. All UI elements maintain sufficient color contrast in both light and dark modes (WCAG AA).
+
+**Story 4.3: Control Grouping & Dynamic Disabling**
+> As a user,
+> I want related controls to be visually grouped and non-essential settings to be disabled while the clicker is running,
+> so that the UI is organized and I'm prevented from making accidental changes during operation.
+
+- **Acceptance Criteria:**
+    1. Primary controls (Interval Input, Mouse Button Selector) are visually grouped together.
+    2. Hotkey configuration elements are visually grouped separately.
+    3. When the auto-clicker is "RUNNING", all interactive UI elements *except* the Stop button and the current interval display (which is updated by hotkey) are disabled and appear greyed out.
+    4. When the auto-clicker is "STOPPED", all interactive UI elements are enabled.
+
+**Story 4.4: Manual Start/Stop Buttons**
+> As a user,
+> I want clear Start and Stop buttons in the UI,
+> so that I have a manual way to control the auto-clicker in addition to the hotkey.
+
+- **Acceptance Criteria:**
+    1. The main window contains a clearly labeled "Start" button.
+    2. The main window contains a clearly labeled "Stop" button.
+    3. The "Start" button is enabled only when the auto-clicker is "STOPPED".
+    4. The "Stop" button is enabled only when the auto-clicker is "RUNNING".
+    5. Clicking "Start" initiates the auto-clicking functionality.
+    6. Clicking "Stop" ceases the auto-clicking functionality.
+
+**Story 4.5: UI Component Styling**
+> As a developer,
+> I want to apply consistent and compact styling to all UI components,
+> so that the application has a polished and professional appearance.
+
+- **Acceptance Criteria:**
+    1. All `iced` widgets (Text Input, Dropdown, Checkbox, Button) use custom styling that aligns with the Frontend Specification's Component Library.
+    2. Components have compact heights and appropriate internal padding.
+    3. Visual feedback (e.g., hover, focus states) is clear and consistent.
+    4. The system default UI font is used throughout the application.
+
+**Story 4.6: Accessibility Enhancements**
+> As a user,
+> I want to navigate and interact with the UI using only my keyboard,
+> so that the application is accessible to users who cannot use a mouse.
+
+- **Acceptance Criteria:**
+    1. All interactive UI elements are navigable via the Tab key in a logical order.
+    2. Interactive elements (buttons, text inputs, checkboxes) can be activated using Enter or Space.
+    3. Clear focus indicators are visible for the currently selected UI element.
+    4. Labels are programmatically associated with their respective controls for screen reader compatibility.
+
+**Story 4.7: Micro-interactions and Feedback**
+> As a user,
+> I want subtle animations and visual cues for key interactions and state changes,
+> so that the application feels responsive and provides clear feedback.
+
+- **Acceptance Criteria:**
+    1. A subtle animation (e.g., quick fade, color transition) is applied when the application's status changes from "RUNNING" to "STOPPED" and vice-versa.
+    2. Interactive elements transition smoothly when becoming disabled or enabled.
+    3. A brief visual cue is provided when a key press is successfully captured in a hotkey input field.
+
+### Epic 5: Technical Debt & Refinement
+
+*Goal: To address identified technical debt and optimize application performance.*
+
+**Story 5.1: Tech Debt - Consolidate Input Libraries**
+> As a developer,
+> I want to consolidate the input handling libraries (`rdev` and `global-hotkey`) into a single, cohesive solution,
+> so that the project reduces its dependency count, simplifies maintenance, and eliminates potential conflicts or redundant functionality.
+
+- **Acceptance Criteria:**
+    1. The project uses only one primary library for both mouse simulation and global hotkey detection.
+    2. The chosen library fully supports both functionalities required by the application.
+    3. All existing mouse clicking and hotkey toggling functionality remains intact.
+    4. The codebase is updated to use only the consolidated input library.
+    5. The `Cargo.toml` file reflects the removal of the unnecessary input library.
+
+**Story 5.2: Refinement - Hotkey Polling Optimization**
+> As a developer,
+> I want to optimize the hotkey detection mechanism,
+> so that the application consumes fewer CPU resources and is more energy-efficient.
+
+- **Acceptance Criteria:**
+    1. The hotkey detection no longer relies on a fixed-interval polling mechanism within `app.rs`.
+    2. The application utilizes an event-driven mechanism for hotkey detection, if supported by the underlying `global-hotkey` crate and `iced` framework.
+    3. The responsiveness of the hotkey toggle remains consistent or improves.
+    4. CPU usage related to hotkey detection is measurably reduced.
+
 ## 7. Next Steps
 
-- **UX Expert Prompt:** Please review the UI/UX goals. The vision is a minimal, functional UI. We need to ensure the layout is intuitive for the single-window design.
-- **Architect Prompt:** Please review the technical assumptions and the proposed epics/stories to create a suitable architecture document. The key challenges will be implementing reliable global hotkeys and ensuring minimal performance overhead.
+- **PRD Review:** Review the updated PRD with project stakeholders to ensure alignment on current status and future priorities.
+- **Story Creation:** Create new user stories and technical stories based on the updated Epic list and the identified technical debt (removing `rdev`, optimizing hotkey polling).
+- **Prioritization:** Prioritize the newly created stories for future development sprints.
