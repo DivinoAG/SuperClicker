@@ -100,7 +100,7 @@ graph TD
 
 The application will consist of a single, compact window. The key is to organize elements effectively within this constrained space.
 
-### Screen: Main Window
+### Screen: Main Window (Visual Blueprint: `reference_ui.jpg`)
 
 *   **Purpose:** To provide a simple interface for configuring the auto-clicker and viewing its status.
 *   **Layout Vision:** A vertically compact window, ideally fixed-size, with clear internal divisions for status, primary controls, and hotkey configuration. The goal is to maximize information density while maintaining readability and generous padding.
@@ -110,39 +110,60 @@ The application will consist of a single, compact window. The key is to organize
     1.  **Window Title Bar (System Default):** Will display "SuperClicker". The window will be non-resizable.
 
     2.  **Status Display:**
-        *   **Placement:** Top center of the main content area.
-        *   **Design:** A prominent text label, perhaps with a background color indicator.
-            *   "Status: RUNNING" (e.g., Green text or background)
-            *   "Status: STOPPED" (e.g., Red/Grey text or background)
+        *   **Placement:** Centered horizontally, prominently displayed in a dedicated area below the window title bar.
+        *   **Design:** Displayed within a distinct button-like rectangular container with significantly rounded corners (similar to the primary action buttons).
+        *   **Text:** Clear, bold text indicating "Status: RUNNING" or "Status: STOPPED". Font size should be slightly larger than standard body text for high visibility.
+        *   **States & Colors (from `reference_ui.jpg`):**
+            *   "Status: RUNNING": Green background (`#4CAF50` or similar vibrant green), white text.
+            *   "Status: STOPPED": Light grey background with dark text in Light Mode; dark grey/subtle dark background with white text in Dark Mode.
+
 
     3.  **Primary Controls Group:**
-        *   **Placement:** Below the Status Display. Visually grouped (e.g., with a light border or background separation).
-        *   **Behavior:** This entire group will be **disabled** (greyed out and unresponsive) when the auto-clicker is "RUNNING".
+        *   **Placement:** Below the Status Display, within its own distinct, slightly recessed or bordered container. The container should have rounded corners, subtly differentiating it from the main window background (e.g., a slightly darker shade in light mode, slightly lighter in dark mode).
+        *   **Behavior:** This entire group will be **disabled** (greyed out and unresponsive to input) when the auto-clicker is "RUNNING". All interactive elements within should visually indicate their disabled state.
         *   **Elements:**
-            *   **Click Interval (ms):** Label, followed by a compact text input field. (Note: Interval can only be changed via hotkey while running, if enabled).
-            *   **Mouse Button:** Label, followed by a dropdown selector (Left, Middle, Right).
-            *   **Dynamic Adjustment Toggle:** Checkbox labeled "Enable Dynamic Interval Adjustment".
+            *   **Click Interval (ms):**
+                *   **Label:** "Click Interval (ms):" with a small icon (e.g., three horizontal lines or a gear) preceding it for visual emphasis.
+                *   **Display:** When enabled, an editable text input field. When disabled (clicker running), it should display the current value as read-only text, e.g., "[100]".
+                *   **Input Field:** Compact, rectangular field with rounded corners. Default value/placeholder "100". Accepts numeric input only.
+            *   **Mouse Button:**
+                *   **Label:** "Mouse Button:" with a small mouse icon preceding it.
+                *   **Display:** When enabled, a dropdown selector. When disabled (clicker running), it should display the current selection as read-only text, e.g., "[Left]".
+                *   **Dropdown:** Compact, rectangular selector with rounded corners. Default selection "Left". Options: Left, Middle, Right.
+            *   **Dynamic Adjustment Toggle:**
+                *   **Label:** "Enable Dynamic Interval Adjustment"
+                *   **Checkbox:** Standard checkbox control. Checked state indicates enabled, unchecked indicates disabled.
+
 
     4.  **Manual Control Buttons:**
-        *   **Placement:** Prominently displayed, perhaps below the Primary Controls or near the Status.
-        *   **Elements:**
-            *   **Start Button:** Enabled only when "STOPPED". Clicking it starts the auto-clicker.
-            *   **Stop Button:** Enabled only when "RUNNING". Clicking it stops the auto-clicker.
-        *   **Behavior:** These buttons provide an alternative to the hotkey for starting and stopping.
+        *   **Placement:** Prominently displayed horizontally centered, below the "Primary Controls Group". The "Start" button should be on the left, and the "Stop" button on the right.
+        *   **Elements & Styling (from `reference_ui.jpg`):**
+            *   **Start Button:**
+                *   **Appearance:** Large, rectangular button with significantly rounded corners.
+                *   **Icon:** Features a distinct 'play' icon (triangle pointing right).
+                *   **Label:** "Start" text alongside the icon.
+                *   **States:** Enabled (blue background with white icon/text) only when the application is "STOPPED". Disabled (greyed out) when "RUNNING".
+            *   **Stop Button:**
+                *   **Appearance:** Large, rectangular button with significantly rounded corners, matching the 'Start' button's size.
+                *   **Icon:** Features a distinct 'square' icon.
+                *   **Label:** "Stop" text alongside the icon.
+                *   **States:** Enabled (blue background with white icon/text) only when the application is "RUNNING". Disabled (greyed out) when "STOPPED".
+        *   **Behavior:** These buttons provide an alternative to the hotkey for starting and stopping the auto-clicker. Their enabled/disabled states should be clear and visually responsive.
 
     5.  **Hotkey Configuration Group (Distinct Visual Grouping):**
-        *   **Placement:** At the bottom, clearly separated from primary controls.
-        *   **Design:** Enclosed within a subtle border or distinct background.
-        *   **Behavior:** This entire group will be **disabled** (greyed out and unresponsive) when the auto-clicker is "RUNNING".
+        *   **Placement:** At the bottom of the window, clearly separated from the manual control buttons. Similar to the "Primary Controls Group," it should be within its own distinct, slightly recessed or bordered container with rounded corners.
+        *   **Design:** The layout within this group should be compact, efficiently displaying all hotkey configuration elements.
+        *   **Behavior:** This entire group will be **disabled** (greyed out and unresponsive to input) when the auto-clicker is "RUNNING". All interactive elements within should visually indicate their disabled state.
         *   **Elements for "Toggle Hotkey":**
-            *   Label: "Toggle Hotkey:"
-            *   Compact layout of Checkboxes for modifiers (Ctrl, Alt, Shift).
-            *   Compact Text Input for the primary key.
+            *   **Label:** "Toggle Hotkey:" with a small icon (e.g., keyboard key or toggle switch) preceding it.
+            *   **Modifier Checkboxes:** Compact, horizontally aligned checkboxes for "Ctrl", "Alt", "Shift".
+            *   **Primary Key Display:** A compact, read-only text input field displaying the currently assigned primary key for the hotkey, e.g., "[F6]". This field should capture a key press when active, rather than allowing free-form text input.
         *   **Elements for "Interval Adjustment Hotkey":**
-            *   Label: "Interval Adjustment Hotkey:"
-            *   Compact layout of Checkboxes for modifiers (Ctrl, Alt, Shift).
-            *   Compact Text Input for the primary key.
+            *   **Label:** "Interval Adjustment Hotkey:" with a small icon (e.g., scroll wheel or arrow) preceding it.
+            *   **Modifier Checkboxes:** Compact, horizontally aligned checkboxes for "Ctrl", "Alt", "Shift".
+            *   **Primary Key Display:** A compact, read-only text input field displaying the currently assigned primary key for the hotkey, e.g., "[Scroll]". This field should capture a scroll event or specific key press when active.
         *   **Save Behavior:** Changes are saved immediately upon valid input when the group is enabled (i.e., when stopped).
+
 
 *   **Window Behavior:**
     *   **Fixed Size:** Non-resizable. The size will be determined by the content with appropriate padding.
@@ -198,23 +219,21 @@ Given the "simple, no-frills utility" vision and the goal to blend with the Wind
 
 ### Color Palette:
 
-*   **Adaptive Theming (CRITICAL):** The application will primarily use system colors where available (e.g., background, text color) to automatically respect the user's light or dark mode preference.
-*   **Reference Aesthetic:** Inspired by "Dark Neumorphism" / Clean Card UI (Reference: `reference_ui.jpg`).
-    *   **Containers:** Grouped elements should be in distinct "cards" with a background color slightly different from the main window background (e.g., slightly lighter in Dark Mode) to create depth.
-    *   **Corners:** Generous border radius for a softer, modern feel.
-    *   **Contrast:** Text must remain high-contrast (WCAG AA) against these card backgrounds.
-*   **Accent Color:** A subtle accent color for interactive elements or status indicators. Let's define this as a light blue (e.g., #4DA6FF).
-*   **Status Colors:**
-    *   Green for "RUNNING" status.
-    *   Red for error states (though not explicitly in PRD, good practice).
-    *   Neutral gray for "STOPPED" status.
-*   **Palette (Example if custom):**
-    *   **Primary:** System background/text
-    *   **Accent Blue:** #4DA6FF (Light Blue)
-    *   **Accent Green:** #4CAF50 (Green)
-    *   **Accent Red:** #F44336 (Red)
-    *   **Warning:** #FFC107 (Amber)
-    *   **Neutral:** System grays
+*   **Adaptive Theming (CRITICAL):** The application will primarily use system colors where available (e.g., main window background, default text color) to automatically respect the user's light or dark mode preference. This creates a seamless integration with the OS.
+*   **Reference Aesthetic:** Inspired by a modern, clean UI with adaptive light/dark modes (as seen in `reference_color.jpg`) and incorporating elements of "Clean Card UI" / subtle layering (visible in `reference_ui.jpg`).
+    *   **Containers/Cards:** Grouped elements (e.g., "Primary Controls", "Hotkey Configuration") should be in distinct "cards" with a background color slightly different from the main window background (e.g., slightly lighter in Dark Mode, slightly darker in Light Mode) to create a subtle sense of depth and separation.
+    *   **Corners:** Generous border radius for a softer, modern feel on all interactive elements and grouping containers.
+    *   **Contrast:** Text must remain high-contrast (WCAG AA compliant, 4.5:1 minimum) against all backgrounds.
+*   **Accent Colors (from `reference_ui.jpg` and `reference_color.jpg` inspiration):**
+    *   **Primary Interactive Blue:** `#0078D4` (Windows accent blue, observed on active buttons/focus states in `reference_ui.jpg`) for active states, primary buttons ("Start", "Stop" when active), and potentially focus indicators.
+    *   **Status Green (Running):** `#4CAF50` (or a similar vibrant green as seen for "RUNNING" status in `reference_ui.jpg`).
+    *   **Status Grey (Stopped):** `#A0A0A0` (light grey for "STOPPED" status background in `reference_ui.jpg` Light Mode). In Dark Mode, a darker desaturated grey should be used.
+*   **General UI Element Colors:**
+    *   **Text/Icons (Light Mode):** Predominantly dark grey/black.
+    *   **Text/Icons (Dark Mode):** Predominantly white/light grey.
+    *   **Input Field Background:** White in Light Mode, very dark grey in Dark Mode.
+    *   **Disabled State Overlay:** A semi-transparent grey overlay or desaturation effect to visually indicate disabled elements.
+
 
 ### Typography:
 
