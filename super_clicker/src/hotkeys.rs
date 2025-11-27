@@ -2,6 +2,7 @@ use iced::futures::channel::mpsc;
 use iced::futures::{SinkExt, StreamExt};
 use iced::Subscription;
 use iced::keyboard;
+use iced::mouse;
 use iced::Event;
 use iced::event;
 use rdev::{listen, EventType, Key};
@@ -10,6 +11,9 @@ use std::thread;
 #[derive(Debug, Clone)]
 pub enum HotkeyEvent {
     Toggle,
+    IntervalChange(i32), // From rdev (Trusted)
+    LocalScroll(f32),    // From iced (Untrusted, need to check modifiers)
+    ModifiersChanged(bool, bool), // From iced
     Ignore,
 }
 
@@ -21,11 +25,10 @@ pub fn subscribe() -> Subscription<HotkeyEvent> {
             let (mut sender, mut receiver) = mpsc::channel(100);
 
             thread::spawn(move || {
-                println!("Starting rdev listener thread...");
+                // Listen loop. This blocks the thread.
                 let mut ctrl = false;
                 let mut alt = false;
-
-                // Listen loop. This blocks the thread.
+                
                 if let Err(error) = listen(move |event| {
                     match event.event_type {
                         EventType::KeyPress(Key::ControlLeft) | EventType::KeyPress(Key::ControlRight) => {
@@ -45,6 +48,12 @@ pub fn subscribe() -> Subscription<HotkeyEvent> {
                                 let _ = sender.try_send(HotkeyEvent::Toggle);
                             }
                         }
+                        EventType::Wheel { delta_y, .. } => {
+                            if ctrl && alt {
+                                // Send raw delta
+                                let _ = sender.try_send(HotkeyEvent::IntervalChange(delta_y as i32));
+                            }
+                        }
                         _ => {}
                     }
                 }) {
@@ -56,7 +65,6 @@ pub fn subscribe() -> Subscription<HotkeyEvent> {
                 let _ = output.send(event).await;
             }
             
-            // The subscription channel expects a Future that never resolves.
             loop {
                 std::future::pending::<()>().await;
             }
@@ -66,18 +74,24 @@ pub fn subscribe() -> Subscription<HotkeyEvent> {
 
 pub fn subscribe_local() -> Subscription<HotkeyEvent> {
     event::listen().map(|event| {
-        if let Event::Keyboard(keyboard::Event::KeyPressed {
-            key,
-            modifiers,
-            ..
-        }) = event {
-            if key == keyboard::Key::Named(keyboard::key::Named::F6) 
-               && modifiers.control() 
-               && modifiers.alt() 
-            {
-                return HotkeyEvent::Toggle;
+        match event {
+            Event::Keyboard(keyboard::Event::KeyPressed { modifiers, key, .. }) => {
+                 if key == keyboard::Key::Named(keyboard::key::Named::F6) 
+                    && modifiers.control() && modifiers.alt() {
+                     return HotkeyEvent::Toggle;
+                 }
+                 return HotkeyEvent::ModifiersChanged(modifiers.control(), modifiers.alt());
             }
+            Event::Keyboard(keyboard::Event::KeyReleased { modifiers, .. }) => {
+                 return HotkeyEvent::ModifiersChanged(modifiers.control(), modifiers.alt());
+            }
+            Event::Mouse(mouse::Event::WheelScrolled { delta }) => {
+                match delta {
+                    mouse::ScrollDelta::Lines { y, .. } => return HotkeyEvent::LocalScroll(y),
+                    mouse::ScrollDelta::Pixels { y, .. } => return HotkeyEvent::LocalScroll(y),
+                }
+            }
+            _ => HotkeyEvent::Ignore
         }
-        HotkeyEvent::Ignore
     })
 }

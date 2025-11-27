@@ -16,6 +16,10 @@ pub struct SuperClicker {
     clicking_engine: ClickingEngine,
     settings: Settings,
     last_toggle: Instant,
+    // Local state for foreground hotkeys
+    ctrl_pressed: bool,
+    alt_pressed: bool,
+    last_scroll_time: Instant,
 }
 
 #[derive(Debug, Clone)]
@@ -26,6 +30,9 @@ pub enum Message {
     Start,
     Stop,
     ToggleFromHotkey,
+    IntervalChange(i32), // From rdev
+    LocalScroll(f32),    // From iced
+    ModifiersChanged(bool, bool),
     NoOp,
 }
 
@@ -48,6 +55,9 @@ impl Application for SuperClicker {
                 clicking_engine: ClickingEngine::new(),
                 settings,
                 last_toggle: Instant::now(),
+                ctrl_pressed: false,
+                alt_pressed: false,
+                last_scroll_time: Instant::now(),
             },
             Command::none(),
         )
@@ -67,6 +77,7 @@ impl Application for SuperClicker {
                 if let Ok(ms) = value.parse::<u64>() {
                     self.settings.interval_ms = ms;
                     let _ = self.settings.save();
+                    self.clicking_engine.update_interval(ms);
                 }
             }
             Message::MouseButtonSelected(value) => {
@@ -96,7 +107,6 @@ impl Application for SuperClicker {
                 self.clicking_engine.stop();
             }
             Message::ToggleFromHotkey => {
-                // Debounce logic: prevent double-toggling if both rdev and iced see the event
                 let now = Instant::now();
                 if now.duration_since(self.last_toggle) < Duration::from_millis(300) {
                     return Command::none();
@@ -114,6 +124,18 @@ impl Application for SuperClicker {
                     self.clicking_engine.start(&self.mouse_button_selected, interval_ms);
                 }
             }
+            Message::IntervalChange(delta) => {
+                self.adjust_interval(delta);
+            }
+            Message::ModifiersChanged(ctrl, alt) => {
+                self.ctrl_pressed = ctrl;
+                self.alt_pressed = alt;
+            }
+            Message::LocalScroll(delta_f32) => {
+                if self.ctrl_pressed && self.alt_pressed {
+                    self.adjust_interval(delta_f32 as i32);
+                }
+            }
             Message::NoOp => {}
         }
 
@@ -124,11 +146,14 @@ impl Application for SuperClicker {
         Subscription::batch(vec![
             hotkeys::subscribe().map(|event| match event {
                 HotkeyEvent::Toggle => Message::ToggleFromHotkey,
-                HotkeyEvent::Ignore => Message::NoOp,
+                HotkeyEvent::IntervalChange(delta) => Message::IntervalChange(delta),
+                _ => Message::NoOp,
             }),
             hotkeys::subscribe_local().map(|event| match event {
                 HotkeyEvent::Toggle => Message::ToggleFromHotkey,
-                HotkeyEvent::Ignore => Message::NoOp,
+                HotkeyEvent::ModifiersChanged(c, a) => Message::ModifiersChanged(c, a),
+                HotkeyEvent::LocalScroll(d) => Message::LocalScroll(d),
+                _ => Message::NoOp,
             }),
         ])
     }
@@ -141,5 +166,44 @@ impl Application for SuperClicker {
             self.enable_dynamic_adjustment,
             self.is_running,
         )
+    }
+}
+
+impl SuperClicker {
+    fn adjust_interval(&mut self, delta: i32) {
+        if !self.enable_dynamic_adjustment { return; }
+
+        let now = Instant::now();
+        let elapsed = now.duration_since(self.last_scroll_time);
+        self.last_scroll_time = now;
+
+        // Acceleration logic
+        let mut multiplier = 1;
+        // If consecutive scrolls happen within 50ms, apply heavy acceleration
+        if elapsed < Duration::from_millis(50) {
+            multiplier = 5;
+        } else if elapsed < Duration::from_millis(100) {
+            multiplier = 2;
+        }
+
+        let current_ms = self.interval_input.parse::<u64>().unwrap_or(100);
+        
+        let base_change = if delta.abs() < 10 {
+            delta // 1 for 1ms adjustment
+        } else {
+            delta / 120 // 120 / 120 = 1ms adjustment
+        };
+        
+        let change = base_change * multiplier;
+        
+        let new_ms_signed = (current_ms as i64) - (change as i64);
+        let new_ms = new_ms_signed.max(1).min(10000) as u64;
+
+        if new_ms != current_ms {
+            self.interval_input = new_ms.to_string();
+            self.settings.interval_ms = new_ms;
+            let _ = self.settings.save();
+            self.clicking_engine.update_interval(new_ms);
+        }
     }
 }

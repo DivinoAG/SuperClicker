@@ -14,6 +14,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 ### Change Log
 | Date       | Version | Description                               | Author |
 | :--------- | :------ | :---------------------------------------- | :----- |
+| 2025-11-27 | 1.2     | Epic 2 & 5 Completed                      | James  |
 | 2025-11-27 | 1.1     | Hotkey toggle implemented; docs aligned   | James  |
 | 2025-10-29 | 1.0     | Initial Draft                             | John   |
 
@@ -63,7 +64,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 ## 5. Epic List
 
 - **Epic 1: Foundational Setup & Core Click Logic:** **COMPLETED (Hotkeys Primary Control)** - Basic clicking mechanism and main window implemented. Hotkeys are now the primary start/stop control, replacing UI buttons.
-- **Epic 2: Advanced Control and Hotkeys:** **IN PROGRESS** - Basic hotkey toggle implemented. Dynamic adjustment and customization are pending.
+- **Epic 2: Advanced Control and Hotkeys:** **COMPLETED** - Basic hotkey toggle and dynamic interval adjustment implemented.
 - **Epic 3: Hotkey Customization:** **PENDING** - User-configurable hotkeys not yet implemented.
 - **Epic 4: UI/UX Refactor:** **PENDING** - Improve the application's visual design, layout, and user experience to be more polished, professional, and compact, respecting system themes.
 - **Epic 5: Technical Debt & Refinement:** **COMPLETED** - Address identified technical debt and optimize performance.
@@ -103,7 +104,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 *Goal: To enable full background control of the application using system-wide hotkeys for a seamless user experience.*
 
-**Story 2.1: Toggle Hotkey (PARTIALLY IMPLEMENTED)**
+**Story 2.1: Toggle Hotkey (COMPLETED)**
 > As a user,
 > I want to press a global hotkey to start and stop the auto-clicker,
 > so that I don't have to switch to the application window.
@@ -113,7 +114,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
     2. The hotkey works even when the SuperClicker application is not the active window.
     3. The "Start" and "Stop" buttons in the UI are no longer present, as the hotkey is now the primary control.
 
-**Story 2.2: Dynamic Interval Adjustment Hotkey**
+**Story 2.2: Dynamic Interval Adjustment Hotkey (COMPLETED)**
 > As a user,
 > I want to hold a hotkey and use my mouse wheel to change the click interval,
 > so that I can adjust the click speed on the fly.
