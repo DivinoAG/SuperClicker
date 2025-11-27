@@ -1,5 +1,5 @@
-use global_hotkey::{hotkey::HotKey, GlobalHotKeyManager, hotkey::Modifiers};
-use std::sync::{Arc, Mutex, mpsc};
+use global_hotkey::{hotkey::HotKey, GlobalHotKeyManager, hotkey::Modifiers, GlobalHotKeyEvent, HotKeyState};
+use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
 pub struct HotkeyManager {
@@ -26,7 +26,7 @@ impl HotkeyManager {
         }
     }
 
-    pub fn start_listening(&self, tx: mpsc::Sender<()>) {
+    pub fn start_listening(&self) {
         // Create hotkey: Ctrl+Alt+F6
         let hk = HotKey::new(
             Some(Modifiers::CONTROL | Modifiers::ALT),
@@ -51,5 +51,15 @@ impl HotkeyManager {
 
     pub fn stop_listening(&self) {
         *self.hotkey_registered.lock().unwrap() = false;
+    }
+
+    pub fn check_event(&self) -> bool {
+        let mut received = false;
+        while let Ok(event) = GlobalHotKeyEvent::receiver().try_recv() {
+            if event.state == HotKeyState::Released {
+                received = true;
+            }
+        }
+        received
     }
 }

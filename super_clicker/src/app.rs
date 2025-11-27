@@ -1,10 +1,9 @@
-use iced::{executor, Application, Command, Element, Theme};
+use iced::{executor, Application, Command, Element, Theme, Subscription};
 
 use super::ui;
 use super::clicking::ClickingEngine;
 use super::hotkeys::HotkeyManager;
 use super::settings::Settings;
-use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
 
@@ -17,7 +16,6 @@ pub struct SuperClicker {
     clicking_engine: ClickingEngine,
     hotkey_manager: HotkeyManager,
     settings: Settings,
-    hotkey_rx: Option<mpsc::Receiver<()>>,
 }
 
 #[derive(Debug, Clone)]
@@ -28,6 +26,7 @@ pub enum Message {
     Start,
     Stop,
     ToggleFromHotkey,
+    Tick,
 }
 
 impl Application for SuperClicker {
@@ -39,12 +38,9 @@ impl Application for SuperClicker {
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
         let settings = Settings::load().unwrap_or_default();
 
-        // Create channel for hotkey events
-        let (tx, rx) = mpsc::channel();
-
-        let mut hotkey_manager = HotkeyManager::new();
+        let hotkey_manager = HotkeyManager::new();
         // Start listening for hotkeys
-        hotkey_manager.start_listening(tx);
+        hotkey_manager.start_listening();
 
         (
             SuperClicker {
@@ -56,7 +52,6 @@ impl Application for SuperClicker {
                 clicking_engine: ClickingEngine::new(),
                 hotkey_manager,
                 settings,
-                hotkey_rx: Some(rx),
             },
             Command::none(),
         )
@@ -117,27 +112,19 @@ impl Application for SuperClicker {
                         self.clicking_engine.start(&self.mouse_button_selected, interval_ms);
                     }
                 }
-            }
-
-            // Check for hotkey events
-            if let Some(ref rx) = self.hotkey_rx {
-                if rx.try_recv().is_ok() {
-                    // Hotkey was pressed, trigger toggle
-                    if self.is_running {
-                        self.is_running = false;
-                        self.status = String::from("Stopped");
-                        self.clicking_engine.stop();
-                    } else {
-                        self.is_running = true;
-                        self.status = String::from("Running");
-                        let interval_ms: u64 = self.interval_input.parse().unwrap_or(100);
-                        self.clicking_engine.start(&self.mouse_button_selected, interval_ms);
+                Message::Tick => {
+                    if self.hotkey_manager.check_event() {
+                        return self.update(Message::ToggleFromHotkey);
                     }
                 }
             }
 
             Command::none()
         }
+
+    fn subscription(&self) -> Subscription<Self::Message> {
+        iced::time::every(Duration::from_millis(100)).map(|_| Message::Tick)
+    }
 
     fn view(&self) -> Element<Self::Message> {
         ui::view(
