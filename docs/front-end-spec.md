@@ -199,17 +199,21 @@ Given the "simple, no-frills utility" vision and the goal to blend with the Wind
 ### Color Palette:
 
 *   **Adaptive Theming (CRITICAL):** The application will primarily use system colors where available (e.g., background, text color) to automatically respect the user's light or dark mode preference.
-*   **Accent Color:** A subtle accent color for interactive elements or status indicators (e.g., a teal or blue from the Windows palette).
+*   **Reference Aesthetic:** Inspired by "Dark Neumorphism" / Clean Card UI (Reference: `reference_ui.jpg`).
+    *   **Containers:** Grouped elements should be in distinct "cards" with a background color slightly different from the main window background (e.g., slightly lighter in Dark Mode) to create depth.
+    *   **Corners:** Generous border radius for a softer, modern feel.
+    *   **Contrast:** Text must remain high-contrast (WCAG AA) against these card backgrounds.
+*   **Accent Color:** A subtle accent color for interactive elements or status indicators. Let's define this as a light blue (e.g., #4DA6FF).
 *   **Status Colors:**
     *   Green for "RUNNING" status.
     *   Red for error states (though not explicitly in PRD, good practice).
     *   Neutral gray for "STOPPED" status.
 *   **Palette (Example if custom):**
     *   **Primary:** System background/text
-    *   **Accent:** #0078D4 (Windows Blue)
-    *   **Success:** #4CAF50 (Green)
+    *   **Accent Blue:** #4DA6FF (Light Blue)
+    *   **Accent Green:** #4CAF50 (Green)
+    *   **Accent Red:** #F44336 (Red)
     *   **Warning:** #FFC107 (Amber)
-    *   **Error:** #F44336 (Red)
     *   **Neutral:** System grays
 
 ### Typography:
