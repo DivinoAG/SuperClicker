@@ -218,6 +218,11 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 > I want to optimize the hotkey detection mechanism,
 > so that the application consumes fewer CPU resources and is more energy-efficient.
 
+**Story 5.3: Hide Console Window (DONE)**
+> As a user,
+> I want the application to run without a visible command prompt/terminal window,
+> so that it feels like a professional native Windows application.
+
 - **Acceptance Criteria:**
     1. The hotkey detection no longer relies on a fixed-interval polling mechanism within `app.rs`.
     2. The application utilizes an event-driven mechanism for hotkey detection, if supported by the underlying `global-hotkey` crate and `iced` framework.

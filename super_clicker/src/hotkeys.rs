@@ -14,7 +14,6 @@ pub enum HotkeyEvent {
     IntervalChange(i32), // From rdev (Trusted)
     LocalScroll(f32),    // From iced (Untrusted, need to check modifiers)
     ModifiersChanged(bool, bool), // From iced
-    Ignore,
 }
 
 pub fn subscribe() -> Subscription<HotkeyEvent> {
