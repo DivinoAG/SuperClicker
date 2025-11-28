@@ -73,25 +73,27 @@ pub fn subscribe() -> Subscription<HotkeyEvent> {
 }
 
 pub fn subscribe_local() -> Subscription<HotkeyEvent> {
-    event::listen().map(|event| {
+    use iced::event::Status;
+
+    event::listen_with(|event, status| {
+        if status == Status::Captured {
+            return None;
+        }
+
         match event {
-            Event::Keyboard(keyboard::Event::KeyPressed { modifiers, key, .. }) => {
-                 if key == keyboard::Key::Named(keyboard::key::Named::F6) 
-                    && modifiers.control() && modifiers.alt() {
-                     return HotkeyEvent::Toggle;
-                 }
-                 return HotkeyEvent::ModifiersChanged(modifiers.control(), modifiers.alt());
+            Event::Keyboard(keyboard::Event::ModifiersChanged(modifiers)) => {
+                Some(HotkeyEvent::ModifiersChanged(
+                    modifiers.control(),
+                    modifiers.alt(),
+                ))
             }
-            Event::Keyboard(keyboard::Event::KeyReleased { modifiers, .. }) => {
-                 return HotkeyEvent::ModifiersChanged(modifiers.control(), modifiers.alt());
-            }
-            Event::Mouse(mouse::Event::WheelScrolled { delta }) => {
-                match delta {
-                    mouse::ScrollDelta::Lines { y, .. } => return HotkeyEvent::LocalScroll(y),
-                    mouse::ScrollDelta::Pixels { y, .. } => return HotkeyEvent::LocalScroll(y),
+            Event::Mouse(mouse::Event::WheelScrolled { delta }) => match delta {
+                mouse::ScrollDelta::Lines { y, .. } => Some(HotkeyEvent::LocalScroll(y)),
+                mouse::ScrollDelta::Pixels { y, .. } => {
+                    Some(HotkeyEvent::LocalScroll(y / 10.0))
                 }
-            }
-            _ => HotkeyEvent::Ignore
+            },
+            _ => None,
         }
     })
 }
