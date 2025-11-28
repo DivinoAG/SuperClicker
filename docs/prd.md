@@ -223,6 +223,11 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 > I want the application to run without a visible command prompt/terminal window,
 > so that it feels like a professional native Windows application.
 
+**Story 5.4: Refine Interval Adjustment Acceleration Curve**
+> As a user,
+> I want a smoother, more aggressive acceleration curve when adjusting the click interval with the mouse wheel,
+> so that I can fine-tune at slow speeds and ramp up to high speeds more effectively.
+
 - **Acceptance Criteria:**
     1. The hotkey detection no longer relies on a fixed-interval polling mechanism within `app.rs`.
     2. The application utilizes an event-driven mechanism for hotkey detection, if supported by the underlying `global-hotkey` crate and `iced` framework.
