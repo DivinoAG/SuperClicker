@@ -66,7 +66,7 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 - **Epic 1: Foundational Setup & Core Click Logic:** **COMPLETED (Hotkeys Primary Control)** - Basic clicking mechanism and main window implemented. Hotkeys are now the primary start/stop control, replacing UI buttons.
 - **Epic 2: Advanced Control and Hotkeys:** **COMPLETED** - Basic hotkey toggle and dynamic interval adjustment implemented.
 - **Epic 3: Hotkey Customization:** **PENDING** - User-configurable hotkeys not yet implemented.
-- **Epic 4: UI/UX Refactor:** **PENDING** - Improve the application's visual design, layout, and user experience to be more polished, professional, and compact, respecting system themes.
+- **Epic 4: UI/UX Refactor:** **IN PROGRESS** - Improve the application's visual design, layout, and user experience to be more polished, professional, and compact, respecting system themes.
 - **Epic 5: Technical Debt & Refinement:** **COMPLETED** - Address identified technical debt and optimize performance.
 
 ## 6. Epic Details
@@ -136,23 +136,12 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 > I want a UI to configure my preferred hotkeys,
 > so that I can avoid conflicts with other applications and use combinations that are comfortable for me.
 
-- **Acceptance Criteria:**
-    1. The main window has a clearly labeled section for "Toggle Hotkey Customization".
-    2. This section contains checkboxes for Ctrl, Alt, and Shift.
-    3. This section contains a text input field that captures a single key press.
-    4. The main window has a similar section for "Interval Adjustment Hotkey Customization".
-    5. The input field can be cleared to allow for combinations of only modifier keys (Ctrl, Alt, Shift).
+- **Note:** This story now includes the implementation of the placeholder UI elements and their styling, de-scoped from Story 4.3.
 
 **Story 3.2: Logic for Custom Hotkeys**
 > As a developer,
 > I want to save the user's custom hotkey configuration and register them with the operating system,
 > so that the user's preferences are applied and persist across sessions.
-
-- **Acceptance Criteria:**
-    1. The application saves the customized hotkey settings.
-    2. The application unregisters the old hotkeys and registers the new custom hotkeys.
-    3. The custom hotkeys are loaded and applied when the application starts.
-    4. Default hotkeys (Ctrl+Alt+F6 and Ctrl+Alt+Shift) are used if no custom configuration is saved.
 
 ### Epic 4: UI/UX Refactor
 
@@ -163,77 +152,46 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 > I want the application window to be compact and non-resizable,
 > so that it takes up minimal screen space and has a professional appearance.
 
-- **Acceptance Criteria:**
-    1. The main application window has a fixed size, determined by its content.
-    2. The window is not resizable by the user.
-    3. The window displays the application title "SuperClicker" in its title bar.
-    4. Elements within the window are laid out with consistent padding and margins, as per the Frontend Specification.
-
 **Story 4.2: Adaptive Theming & Enhanced Status Display**
 > As a user,
 > I want the application to respect my system's light/dark mode settings and show a clear status,
 > so that the app integrates seamlessly with my OS and I can easily tell if it's active.
 
-- **Acceptance Criteria:**
-    1. The application's UI theme (colors, backgrounds) automatically adapts to the system's light or dark mode setting.
-    2. The "Status" display (Running/Stopped) is visually prominent with distinct colors (e.g., green for Running, neutral for Stopped).
-    3. All UI elements maintain sufficient color contrast in both light and dark modes (WCAG AA).
-
-**Story 4.3: Control Grouping & Dynamic Disabling**
+**Story 4.3: Control Grouping & Dynamic Disabling (DONE)**
 > As a user,
 > I want related controls to be visually grouped and non-essential settings to be disabled while the clicker is running,
 > so that the UI is organized and I'm prevented from making accidental changes during operation.
 
-- **Acceptance Criteria:**
-    1. Primary controls (Interval Input, Mouse Button Selector) are visually grouped together.
-    2. Hotkey configuration elements are visually grouped separately.
-    3. When the auto-clicker is "RUNNING", all interactive UI elements *except* the Stop button and the current interval display (which is updated by hotkey) are disabled and appear greyed out.
-    4. When the auto-clicker is "STOPPED", all interactive UI elements are enabled.
+- **Note:** This story is complete. Hotkey UI, button icons, and tab navigation were de-scoped into stories 3.1, 4.8, and 4.6 respectively.
 
 **Story 4.4: Manual Start/Stop Buttons**
 > As a user,
 > I want clear Start and Stop buttons in the UI,
 > so that I have a manual way to control the auto-clicker in addition to the hotkey.
 
-- **Acceptance Criteria:**
-    1. The main window contains a clearly labeled "Start" button.
-    2. The main window contains a clearly labeled "Stop" button.
-    3. The "Start" button is enabled only when the auto-clicker is "STOPPED".
-    4. The "Stop" button is enabled only when the auto-clicker is "RUNNING".
-    5. Clicking "Start" initiates the auto-clicking functionality.
-    6. Clicking "Stop" ceases the auto-clicking functionality.
-
 **Story 4.5: UI Component Styling**
 > As a developer,
 > I want to apply consistent and compact styling to all UI components,
 > so that the application has a polished and professional appearance.
-
-- **Acceptance Criteria:**
-    1. All `iced` widgets (Text Input, Dropdown, Checkbox, Button) use custom styling that aligns with the Frontend Specification's Component Library.
-    2. Components have compact heights and appropriate internal padding.
-    3. Visual feedback (e.g., hover, focus states) is clear and consistent.
-    4. The system default UI font is used throughout the application.
 
 **Story 4.6: Accessibility Enhancements**
 > As a user,
 > I want to navigate and interact with the UI using only my keyboard,
 > so that the application is accessible to users who cannot use a mouse.
 
-- **Acceptance Criteria:**
-    1. All interactive UI elements are navigable via the Tab key in a logical order.
-    2. Interactive elements (buttons, text inputs, checkboxes) can be activated using Enter or Space.
-    3. Clear focus indicators are visible for the currently selected UI element.
-    4. Labels are programmatically associated with their respective controls for screen reader compatibility.
+- **Note:** This story now includes the investigation and resolution of the tab navigation bug discovered during Story 4.3.
 
 **Story 4.7: Micro-interactions and Feedback**
 > As a user,
 > I want subtle animations and visual cues for key interactions and state changes,
 > so that the application feels responsive and provides clear feedback.
 
-- **Acceptance Criteria:**
-    1. A subtle animation (e.g., quick fade, color transition) is applied when the application's status changes from "RUNNING" to "STOPPED" and vice-versa.
-    2. Interactive elements transition smoothly when becoming disabled or enabled.
-    3. A brief visual cue is provided when a key press is successfully captured in a hotkey input field.
+**Story 4.8: Implement Robust Button Icons**
+> As a user,
+> I want visual icons on the Start and Stop buttons,
+> so that the UI is more intuitive and visually appealing.
+
+- **Note:** This story addresses the technical debt from Story 4.3 regarding the failure of Unicode icons to render correctly. It will involve implementing a reliable icon solution.
 
 ### Epic 5: Technical Debt & Refinement
 
