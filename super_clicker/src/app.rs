@@ -44,7 +44,7 @@ pub enum Message {
 impl Application for SuperClicker {
     type Executor = executor::Default;
     type Message = Message;
-    type Theme = iced::Theme; // Keep iced::Theme as the associated type for Application
+    type Theme = AppTheme;
     type Flags = ();
 
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
@@ -52,9 +52,9 @@ impl Application for SuperClicker {
         
         let mode = dark_light::detect();
         let theme = match mode {
-            dark_light::Mode::Dark => AppTheme::Dark, // Initialize with AppTheme
-            dark_light::Mode::Light => AppTheme::Light, // Initialize with AppTheme
-            _ => AppTheme::Dark, // Default to Dark AppTheme
+            dark_light::Mode::Dark => AppTheme::Dark,
+            dark_light::Mode::Light => AppTheme::Light,
+            _ => AppTheme::Dark,
         };
 
         (
@@ -80,8 +80,8 @@ impl Application for SuperClicker {
         String::from("SuperClicker")
     }
 
-    fn theme(&self) -> iced::Theme { // Returns iced::Theme
-        self.current_theme.into() // Use into() to convert AppTheme to iced::Theme
+    fn theme(&self) -> AppTheme {
+        self.current_theme
     }
 
     fn update(
@@ -157,8 +157,8 @@ impl Application for SuperClicker {
             Message::CheckTheme => {
                 let mode = dark_light::detect();
                 let new_theme = match mode {
-                    dark_light::Mode::Dark => AppTheme::Dark, // Pass AppTheme
-                    dark_light::Mode::Light => AppTheme::Light, // Pass AppTheme
+                    dark_light::Mode::Dark => AppTheme::Dark,
+                    dark_light::Mode::Light => AppTheme::Light,
                     _ => AppTheme::Dark,
                 };
                 if new_theme != self.current_theme {
@@ -166,7 +166,7 @@ impl Application for SuperClicker {
                 }
             }
             Message::ThemeChanged(theme) => {
-                self.current_theme = theme; // Set AppTheme
+                self.current_theme = theme;
             }
         }
 
@@ -190,7 +190,7 @@ impl Application for SuperClicker {
         ])
     }
 
-    fn view(&self) -> Element<'_, Self::Message> {
+    fn view(&self) -> Element<'_, Self::Message, AppTheme> {
         ui::view(
             &self.status,
             &self.interval_input,
