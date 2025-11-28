@@ -21,8 +21,8 @@ pub struct SuperClicker {
     // Local state for foreground hotkeys
     ctrl_pressed: bool,
     alt_pressed: bool,
-    last_scroll_time: Instant,
-    current_theme: AppTheme, // Changed type to AppTheme
+    last_scroll_time: Option<Instant>, // Changed to Option
+    current_theme: AppTheme,
 }
 
 #[derive(Debug, Clone)]
@@ -38,7 +38,7 @@ pub enum Message {
     ModifiersChanged(bool, bool),
     NoOp,
     CheckTheme,
-    ThemeChanged(AppTheme), // Changed to AppTheme
+    ThemeChanged(AppTheme),
 }
 
 impl Application for SuperClicker {
@@ -69,13 +69,13 @@ impl Application for SuperClicker {
                 last_toggle: Instant::now(),
                 ctrl_pressed: false,
                 alt_pressed: false,
-                last_scroll_time: Instant::now(),
+                last_scroll_time: None, // Initialize as None
                 current_theme: theme,
             },
             Command::none(),
         )
     }
-
+    
     fn title(&self) -> String {
         String::from("SuperClicker")
     }
@@ -206,29 +206,39 @@ impl SuperClicker {
         if !self.enable_dynamic_adjustment { return; }
 
         let now = Instant::now();
-        let elapsed = now.duration_since(self.last_scroll_time);
-        self.last_scroll_time = now;
+        // Use a large default elapsed time on the first event to ensure a small multiplier.
+        let elapsed_ms = self.last_scroll_time
+            .map_or(1000.0, |last| now.duration_since(last).as_secs_f64() * 1000.0);
+        self.last_scroll_time = Some(now);
 
-        // Acceleration logic
-        let mut multiplier = 1;
-        // If consecutive scrolls happen within 50ms, apply heavy acceleration
-        if elapsed < Duration::from_millis(50) {
-            multiplier = 5;
-        } else if elapsed < Duration::from_millis(100) {
-            multiplier = 2;
-        }
+        // Any scroll slower than this is guaranteed to be a 1x multiplier for max sensitivity.
+        const MAX_SENSITIVITY_THRESHOLD_MS: f64 = 150.0;
+        // This constant determines how aggressively the multiplier increases once scrolling is
+        // faster than the sensitivity threshold.
+        const ACCELERATION_FACTOR: f64 = 150.0;
+
+        // If user is scrolling slowly, guarantee a 1x multiplier for precision.
+        // Otherwise, use the inverse curve for acceleration.
+        let multiplier = if elapsed_ms >= MAX_SENSITIVITY_THRESHOLD_MS {
+            1.0
+        } else {
+            (ACCELERATION_FACTOR / elapsed_ms).max(1.0).min(100.0)
+        };
 
         let current_ms = self.interval_input.parse::<u64>().unwrap_or(100);
         
+        // Normalize scroll delta. Some mice report large values.
         let base_change = if delta.abs() < 10 {
-            delta // 1 for 1ms adjustment
+            delta as f64
         } else {
-            delta / 120 // 120 / 120 = 1ms adjustment
+            (delta / 120) as f64
         };
         
-        let change = base_change * multiplier;
+        // Apply the dynamic multiplier
+        let change = (base_change * multiplier).round() as i64;
         
-        let new_ms_signed = (current_ms as i64) - (change as i64);
+        let new_ms_signed = (current_ms as i64) - change;
+        // Clamp the result to the allowed range (1ms to 10s).
         let new_ms = new_ms_signed.max(1).min(10000) as u64;
 
         if new_ms != current_ms {
