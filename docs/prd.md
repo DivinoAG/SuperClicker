@@ -164,15 +164,19 @@ Many users, particularly in gaming and data entry, perform highly repetitive cli
 
 - **Note:** This story is complete. Hotkey UI, button icons, and tab navigation were de-scoped into stories 3.1, 4.8, and 4.6 respectively.
 
-**Story 4.4: Manual Start/Stop Buttons**
+**Story 4.4: Manual Start/Stop Buttons (DONE)**
 > As a user,
 > I want clear Start and Stop buttons in the UI,
 > so that I have a manual way to control the auto-clicker in addition to the hotkey.
 
-**Story 4.5: UI Component Styling**
+- **Note:** This story was completed as part of Story 4.3: Control Grouping & Dynamic Disabling.
+
+**Story 4.5: UI Component Styling (DONE)**
 > As a developer,
 > I want to apply consistent and compact styling to all UI components,
 > so that the application has a polished and professional appearance.
+
+- **Note:** This story was largely completed as part of Story 4.3: Control Grouping & Dynamic Disabling.
 
 **Story 4.6: Accessibility Enhancements**
 > As a user,
